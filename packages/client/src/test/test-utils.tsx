@@ -1,35 +1,37 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { cleanup, render } from '@testing-library/react'
-import { afterEach } from 'vitest'
+import {
+  type RenderOptions,
+  type RenderResult,
+  render,
+} from '@testing-library/react'
+import type { PropsWithChildren, ReactElement } from 'react'
 
-afterEach(() => {
-  cleanup()
-})
-
-function createTestQueryClient() {
-  return new QueryClient({
+const createTestQueryClient = () =>
+  new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
       },
     },
   })
-}
 
-export function renderWithClient(ui: React.ReactElement) {
+type WrapperProps = PropsWithChildren<unknown>
+
+function Wrapper({ children }: WrapperProps) {
   const testQueryClient = createTestQueryClient()
-  const { rerender, ...result } = render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+  return (
+    <QueryClientProvider client={testQueryClient}>
+      {children}
+    </QueryClientProvider>
   )
-  return {
-    ...result,
-    rerender: (rerenderUi: React.ReactElement) =>
-      rerender(
-        <QueryClientProvider client={testQueryClient}>
-          {rerenderUi}
-        </QueryClientProvider>
-      ),
-  }
 }
 
-export * from '@testing-library/react'
+export function renderWithClient(
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>
+): RenderResult {
+  return render(ui, {
+    wrapper: Wrapper,
+    ...options,
+  })
+}
