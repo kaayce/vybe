@@ -1,0 +1,22 @@
+# Dependencies
+**/node_modules
+**/.turbo
+**/.next
+**/.cache
+**/dist
+**/build
+
+# Environment
+**/.env*
+!**/.env.example
+
+# Development
+**/.git
+**/.vscode
+**/.idea
+**/README.md
+**/LICENSE
+**/*.log
+**/*.md
+**/docker-compose*
+**/Dockerfile*
