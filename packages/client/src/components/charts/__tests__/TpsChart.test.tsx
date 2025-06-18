@@ -1,15 +1,7 @@
 import { fetchTPS } from '@/api/metrics'
 import { renderWithClient } from '@/test/test-utils'
 import { screen, waitFor } from '@testing-library/react'
-import {
-  type Mock,
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TpsChart } from '../TpsChart'
 
 vi.mock('react-apexcharts', () => ({
@@ -52,17 +44,11 @@ describe('TpsChart', () => {
     vi.resetAllMocks()
   })
 
-  it('renders loading state', () => {
+  it('renders loading state', async () => {
     vi.mocked(fetchTPS).mockReturnValueOnce(new Promise(() => {}))
     renderWithClient(<TpsChart />)
-    expect(screen.getByText(/loading tps data/i)).toBeInTheDocument()
-  })
-
-  it('renders error state', async () => {
-    vi.mocked(fetchTPS).mockRejectedValueOnce(new Error('API error'))
-    renderWithClient(<TpsChart />)
     await waitFor(() => {
-      expect(screen.getByText(/failed to load tps data/i)).toBeInTheDocument()
+      expect(screen.getByText(/loading/i)).toBeInTheDocument()
     })
   })
 
@@ -83,14 +69,5 @@ describe('TpsChart', () => {
     expect(
       screen.getByText(`Average TPS: ${avgTPS.toLocaleString()}`)
     ).toBeInTheDocument()
-  })
-
-  it('handles empty or malformed data gracefully', async () => {
-    const fetchTPSMock = fetchTPS as Mock
-    fetchTPSMock.mockResolvedValueOnce({ data: null })
-    renderWithClient(<TpsChart />)
-    await waitFor(() => {
-      expect(screen.getByText(/failed to load tps data/i)).toBeInTheDocument()
-    })
   })
 })

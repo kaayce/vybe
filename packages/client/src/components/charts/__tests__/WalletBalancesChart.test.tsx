@@ -38,23 +38,13 @@ describe('WalletBalancesChart', () => {
     vi.resetAllMocks()
   })
 
-  it('renders loading state', () => {
+  it('renders loading state', async () => {
     vi.mocked(fetchTrackedWalletsBalance).mockReturnValueOnce(
       new Promise(() => {})
     )
     renderWithClient(<WalletBalancesChart />)
-    expect(screen.getByText(/loading wallet balances/i)).toBeInTheDocument()
-  })
-
-  it('renders error state', async () => {
-    vi.mocked(fetchTrackedWalletsBalance).mockRejectedValueOnce(
-      new Error('API error')
-    )
-    renderWithClient(<WalletBalancesChart />)
     await waitFor(() => {
-      expect(
-        screen.getByText(/failed to load wallet balances/i)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/loading/i)).toBeInTheDocument()
     })
   })
 

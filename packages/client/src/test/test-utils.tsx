@@ -1,10 +1,11 @@
+import { LoadingCard } from '@/components/LoadingCard'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   type RenderOptions,
   type RenderResult,
   render,
 } from '@testing-library/react'
-import type { PropsWithChildren, ReactElement } from 'react'
+import { type PropsWithChildren, type ReactElement, Suspense } from 'react'
 
 const createTestQueryClient = () =>
   new QueryClient({
@@ -21,7 +22,10 @@ function Wrapper({ children }: WrapperProps) {
   const testQueryClient = createTestQueryClient()
   return (
     <QueryClientProvider client={testQueryClient}>
-      {children}
+      {/* TODO: make message a prop */}
+      <Suspense fallback={<LoadingCard skeletonCount={1} message="Loading" />}>
+        {children}
+      </Suspense>
     </QueryClientProvider>
   )
 }

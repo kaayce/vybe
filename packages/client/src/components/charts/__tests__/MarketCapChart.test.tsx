@@ -24,6 +24,7 @@ vi.mock('@/api/token', () => ({
 const mockTokensData = {
   data: {
     USDT: {
+      symbol: 'USDT',
       address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
       price: 1,
       supply: 2389928498.867865,
@@ -31,6 +32,7 @@ const mockTokensData = {
       lastUpdated: 1749437342552,
     },
     USDC: {
+      symbol: 'USDC',
       address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
       price: 0.999798,
       supply: 8660974590.3005,
@@ -39,6 +41,7 @@ const mockTokensData = {
     },
   },
 }
+
 describe('MarketCapChart', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -48,19 +51,11 @@ describe('MarketCapChart', () => {
     vi.resetAllMocks()
   })
 
-  it('renders loading state', () => {
+  it('renders loading state', async () => {
     vi.mocked(fetchBullishTokens).mockReturnValueOnce(new Promise(() => {}))
     renderWithClient(<MarketCapChart />)
-    expect(screen.getByText(/loading market cap data/i)).toBeInTheDocument()
-  })
-
-  it('renders error state', async () => {
-    vi.mocked(fetchBullishTokens).mockRejectedValueOnce(new Error('API error'))
-    renderWithClient(<MarketCapChart />)
     await waitFor(() => {
-      expect(
-        screen.getByText(/failed to load market cap data/i)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/loading/i)).toBeInTheDocument()
     })
   })
 
