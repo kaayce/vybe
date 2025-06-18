@@ -5,7 +5,7 @@ import type { TPSData } from './tps.types.js'
 
 const log = logger.child({ service: 'TPSService' })
 
-const MAX_DURATION = 86400 // 24 hours in seconds
+const MAX_DURATION = 86400 // 24 hours in seconds - upper bound
 const MAX_SAMPLES = 60 // getRecentPerformanceSamples supports up to 60 samples (1 sample = ~1 min)
 
 export class TPSService {
@@ -16,7 +16,11 @@ export class TPSService {
     log.info('TPSService initialized')
   }
 
-  /** Get historical TPS data for a given duration (in seconds) */
+  /*
+   * Get historical TPS data for a given duration (in seconds)
+   * Each sample covers a period of the last minute - 60 secs
+   * We get data for the last hour (3600 secs)
+   */
   async getTPSHistory(duration = 3600): Promise<TPSData[]> {
     if (
       !Number.isFinite(duration) ||
@@ -40,6 +44,10 @@ export class TPSService {
         return []
       }
 
+      // Calculate the timestamp for each sample.
+      // The samples are ordered from most recent to oldest.
+      // We start with 'now' and subtract 'samplePeriodSecs' (typically 60 seconds)
+      // for each sample as we iterate backwards from the latest sample.
       const now = Date.now()
       const result = samples.map((sample, i) => {
         // Set each sample's timestamp by going back one minute at a time from now
@@ -61,6 +69,7 @@ export class TPSService {
     sample: { numTransactions: number; samplePeriodSecs: number },
     timestamp?: number
   ): TPSData {
+    // TPS: transactions / sample period in seconds
     const tps =
       sample.samplePeriodSecs > 0
         ? sample.numTransactions / sample.samplePeriodSecs

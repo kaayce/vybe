@@ -1,12 +1,14 @@
 import { Hono } from 'hono'
 import { StatusCodes } from 'http-status-codes'
 import { BULLISH_5_TOKENS, TTL } from '../../lib/constants.js'
+import { CoinGeckoPriceProvider } from '../../service/CoinGeckoPriceProvider.js'
 import { TokenService } from '../../service/token.js'
 import { cache } from '../middlelayer/cache.js'
 import { serveInternalServerError } from './resp/error.js'
 import { serve } from './resp/resp.js'
 
-const tokenService = new TokenService()
+const coinGeckoProvider = new CoinGeckoPriceProvider()
+const tokenService = new TokenService(coinGeckoProvider)
 const tokenRouter = new Hono()
 
 tokenRouter.use(

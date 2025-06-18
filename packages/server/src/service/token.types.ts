@@ -11,7 +11,3 @@ export interface TokenData {
 export type TokensDataResponse = {
   [key: string]: TokenData
 }
-
-export interface CoinGeckoDataResponse {
-  usd: number
-}

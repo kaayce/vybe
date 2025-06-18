@@ -23,11 +23,8 @@ export class Server {
     api.route('/wallet', walletRouter)
 
     // static files
-    this.app.use('/assets/*', serveStatic({ root: './dist' }))
-    this.app.use('/favicon.ico', serveStatic({ root: './dist' }))
-    this.app.use('/manifest.json', serveStatic({ root: './dist' }))
-    this.app.use('/robots.txt', serveStatic({ root: './dist' }))
-    this.app.use('/*', serveStatic({ path: './dist/index.html' }))
+    this.app.use('*', serveStatic({ root: './dist' }))
+    this.app.use('*', serveStatic({ path: './dist/index.html' }))
 
     // universal catch-all
     this.app.notFound((c) => {

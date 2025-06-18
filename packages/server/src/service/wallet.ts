@@ -1,4 +1,4 @@
-import { type Connection, PublicKey } from '@solana/web3.js'
+import { type Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { logger } from '../lib/logger.js'
 import { solanaConnection } from '../lib/solana-connection.js'
 
@@ -23,6 +23,7 @@ export class WalletService {
     log.info('WalletService initialized')
   }
 
+  // Fetch SOL balances for a list of wallet addresses
   async getWalletBalances(
     trackedWallets: readonly string[]
   ): Promise<WalletBalance[]> {
@@ -36,9 +37,9 @@ export class WalletService {
 
       const balances: WalletBalance[] = accounts.map((account, i) => ({
         address: trackedWallets[i],
-        balance: account ? account.lamports / 10 ** 9 : 0, // Converts lamports to SOL
+        balance: account ? account.lamports / LAMPORTS_PER_SOL : 0, // Converts lamports to SOL
       }))
-      const sorted = balances.sort((a, b) => b.balance - a.balance)
+      const sorted = balances.toSorted((a, b) => b.balance - a.balance)
       return sorted
     } catch (error) {
       log.error({ error }, 'Failed to fetch wallet balances')
